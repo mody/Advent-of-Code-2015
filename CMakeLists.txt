@@ -24,11 +24,13 @@ pkg_check_modules(FMT REQUIRED fmt)
 find_package(Boost 1.74.0 COMPONENTS regex REQUIRED)
 include_directories(src ${Boost_INCLUDE_DIR})
 
+find_package(range-v3 REQUIRED)
+
 set (DEFAULT_LIBS ${FMT_LIBRARIES} ${Boost_REGEX_LIBRARY})
 
 add_executable(day1 src/day1.cc)
 target_compile_features(day1 PRIVATE cxx_std_20)
-target_link_libraries(day1 PRIVATE ${DEFAULT_LIBS})
+target_link_libraries(day1 PRIVATE ${DEFAULT_LIBS} range-v3)
 
 # add_executable(day2 src/day2.cc)
 # target_compile_features(day2 PRIVATE cxx_std_20)
