@@ -11,7 +11,7 @@
 
 int main()
 {
-    uint64_t area =0;
+    uint64_t area = 0, ribbon = 0;
 
     std::string line;
     while(std::getline(std::cin, line)) {
@@ -30,9 +30,11 @@ int main()
 
         area += (sizes.at(0) * sizes.at(1)) + (2 * sizes.at(0) * sizes.at(1)) + (2 * sizes.at(1) * sizes.at(2))
             + (2 * sizes.at(0) * sizes.at(2));
+        ribbon += 2 * (sizes.at(0) + sizes.at(1)) + sizes.at(0) * sizes.at(1) * sizes.at(2);
     }
 
     fmt::print("1: {}\n", area);
+    fmt::print("2: {}\n", ribbon);
 
     return 0;
 }
