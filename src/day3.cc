@@ -2,6 +2,7 @@
 
 #include <fmt/core.h>
 
+#include <array>
 #include <iostream>
 #include <map>
 #include <unordered_set>
@@ -16,11 +17,8 @@ static const std::map<unsigned char, Gfx_2d::Direction> MOVE2DIR = {
     {'<', Gfx_2d::West},
 };
 
-int main()
+void part1(const std::string& line)
 {
-    std::string line;
-    std::getline(std::cin, line);
-
     std::unordered_set<Point> world;
 
     Point px(0,0);
@@ -32,6 +30,33 @@ int main()
     }
 
     fmt::print("1: {}\n", world.size());
+}
+
+void part2(const std::string& line)
+{
+    std::unordered_set<Point> world;
+
+    std::array<Point, 2> px;
+    world.insert(px.at(0));
+
+    unsigned index = 0;
+
+    for (auto const& c : line) {
+        px.at(index) += MOVE2DIR.at(c);
+        world.insert(px.at(index));
+        index = (index + 1) % px.size();
+    }
+
+    fmt::print("2: {}\n", world.size());
+}
+
+int main()
+{
+    std::string line;
+    std::getline(std::cin, line);
+
+    part1(line);
+    part2(line);
 
     return 0;
 }
