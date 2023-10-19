@@ -99,10 +99,17 @@ int main()
         return true;
     };
 
-    std::string line;
-    while(std::getline(std::cin, line)) {
-        if (line.empty()) break;
+    const std::vector<std::string> program = []() {
+        std::vector<std::string> result;
+        std::string line;
+        while (std::getline(std::cin, line)) {
+            if (line.empty()) break;
+            result.push_back(std::move(line));
+        }
+        return result;
+    }();
 
+    for (auto const& line : program) {
         if (!process(line)) {
             queue.push_back(line);
         }
@@ -117,11 +124,28 @@ int main()
     }
     assert(queue.empty());
 
-    // for (auto const& [k,v] : data) {
-    //     fmt::print("{}: {}\n", k, v.to_ulong());
-    // }
+    Value a = data.at("a");
+    fmt::print("1: {}\n", a.to_ulong());
 
-    fmt::print("1: {}\n", data.at("a").to_ulong());
+
+    data.clear();
+    data["b"] = a;
+    for (auto const& line : program) {
+        if (!process(line)) {
+            queue.push_back(line);
+        }
+        for (auto it = queue.begin(); it != queue.end();) {
+            if (process(*it)) {
+                queue.erase(it);
+                it = queue.begin();
+            } else {
+                ++it;
+            }
+        }
+    }
+    assert(queue.empty());
+
+    fmt::print("2: {}\n", data.at("a").to_ulong());
 
     return 0;
 }
