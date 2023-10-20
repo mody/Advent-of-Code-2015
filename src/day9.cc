@@ -37,7 +37,7 @@ int main()
     }
     std::ranges::sort(path);
 
-    unsigned shortest = std::numeric_limits<unsigned>::max();
+    unsigned shortest = std::numeric_limits<unsigned>::max(), longest = 0;
     do {
         unsigned dist = 0;
         std::string from = path.front();
@@ -46,7 +46,9 @@ int main()
             from = next;
         }
         shortest = std::min(shortest, dist);
+        longest = std::max(longest, dist);
     } while (std::ranges::next_permutation(path).found);
 
     fmt::print("1: {}\n", shortest);
+    fmt::print("2: {}\n", longest);
 }
