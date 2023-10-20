@@ -1,12 +1,8 @@
-#include <cassert>
 #include <fmt/core.h>
-#include <iostream>
-#include <string_view>
 
-// ""
-// "abc"
-// "aaa\"aaa"
-// "\x27"
+#include <cassert>
+#include <iostream>
+#include <sstream>
 
 std::string descape(std::string data)
 {
@@ -30,9 +26,27 @@ std::string descape(std::string data)
     return data.substr(0, out);
 }
 
+std::string escape(const std::string& input)
+{
+    std::stringstream ss;
+
+    for (auto const& c : input) {
+        switch(c) {
+        case '\\':
+        case '\"':
+        case '\'':
+            ss << "\\";
+        default:
+            ss << c;
+        }
+    }
+
+    return ss.str();
+}
+
 int main()
 {
-    unsigned total_size = 0, clean_size = 0;
+    unsigned total_size = 0, clean_size = 0, escaped_size = 0;
 
     std::string line;
     while(std::getline(std::cin, line))
@@ -40,7 +54,9 @@ int main()
         if (line.empty()) break;
         total_size += line.size();
         clean_size += descape(line).size() - 2;
+        escaped_size += escape(line).size() + 2;
     }
 
     fmt::print("1: {}\n", total_size - clean_size);
+    fmt::print("2: {}\n", escaped_size - total_size);
 }
