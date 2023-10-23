@@ -101,8 +101,9 @@ bool Password::has_2_doubles() const noexcept
 int main()
 {
     Password pw("vzbxkghb");
-    for (; !pw.valid();) {
-        ++pw;
-    }
+    for (++pw; !pw.valid();++pw);
     fmt::print("1: {}\n", *pw);
+
+    for (++pw; !pw.valid();++pw);
+    fmt::print("2: {}\n", *pw);
 }
