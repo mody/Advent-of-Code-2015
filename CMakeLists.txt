@@ -7,11 +7,12 @@ set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow  -std=c++20 -fno-omit-frame-pointer 
 #  set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow  -std=c++20 -fno-omit-frame-pointer -ggdb3 -O3 -fsanitize=memory -fsanitize-memory-track-origins")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(PkgConfig)
-pkg_check_modules(FMT REQUIRED fmt)
-#  pkg_check_modules(TBB REQUIRED tbb)
-# pkg_check_modules(PC_RapidJSON QUIET RapidJSON)
+find_package(Boost COMPONENTS regex REQUIRED)
+find_package(range-v3 REQUIRED)
+find_package(RapidJSON REQUIRED)
+find_package(fmt REQUIRED)
 
+find_package(PkgConfig)
 pkg_check_modules(CRYPTOPP libcryptopp)
 if (NOT CRYPTOPP_FOUND)
     pkg_check_modules(CRYPTOPP libcrypto++)
@@ -20,17 +21,11 @@ if (NOT CRYPTOPP_FOUND)
     message(FATAL_ERROR "Crypto++ library not found")
 endif()
 
-# set(BOOST_ROOT "/home/ov699/opt/")
-find_package(Boost 1.74.0 COMPONENTS regex REQUIRED)
-include_directories(src ${Boost_INCLUDE_DIR})
-
-find_package(range-v3 REQUIRED)
-
-set (DEFAULT_LIBS ${FMT_LIBRARIES} ${Boost_REGEX_LIBRARY})
+set (DEFAULT_LIBS fmt)
 
 add_executable(day1 src/day1.cc)
 target_compile_features(day1 PRIVATE cxx_std_20)
-target_link_libraries(day1 PRIVATE ${DEFAULT_LIBS} range-v3)
+target_link_libraries(day1 PRIVATE ${DEFAULT_LIBS})
 
 add_executable(day2 src/day2.cc)
 target_compile_features(day2 PRIVATE cxx_std_20)
@@ -46,11 +41,11 @@ target_link_libraries(day4 PRIVATE ${DEFAULT_LIBS} ${CRYPTOPP_LIBRARIES})
 
 add_executable(day5 src/day5.cc)
 target_compile_features(day5 PRIVATE cxx_std_20)
-target_link_libraries(day5 PRIVATE ${DEFAULT_LIBS})
+target_link_libraries(day5 PRIVATE ${DEFAULT_LIBS} boost_regex)
 
 add_executable(day6 src/day6.cc)
 target_compile_features(day6 PRIVATE cxx_std_20)
-target_link_libraries(day6 PRIVATE ${DEFAULT_LIBS})
+target_link_libraries(day6 PRIVATE ${DEFAULT_LIBS} boost_regex)
 
 add_executable(day7 src/day7.cc)
 target_compile_features(day7 PRIVATE cxx_std_20)
@@ -72,10 +67,10 @@ add_executable(day11 src/day11.cc)
 target_compile_features(day11 PRIVATE cxx_std_20)
 target_link_libraries(day11 PRIVATE ${DEFAULT_LIBS})
 
-# add_executable(day12 src/day12.cc)
-# target_compile_features(day12 PRIVATE cxx_std_20)
-# target_link_libraries(day12 PRIVATE ${DEFAULT_LIBS})
-# 
+add_executable(day12 src/day12.cc)
+target_compile_features(day12 PRIVATE cxx_std_20)
+target_link_libraries(day12 PRIVATE ${DEFAULT_LIBS})
+
 # add_executable(day13 src/day13.cc)
 # target_compile_features(day13 PRIVATE cxx_std_20)
 # target_link_libraries(day13 PRIVATE ${DEFAULT_LIBS})
