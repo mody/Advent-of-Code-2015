@@ -1,20 +1,19 @@
-#include <algorithm>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/constants.hpp>
 #include <boost/algorithm/string/split.hpp>
 
 #include <fmt/core.h>
 
-#include <functional>
+#include <range/v3/algorithm/max_element.hpp>
+#include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/all.hpp>
-
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <iostream>
-#include <numeric>
 #include <range/v3/view/drop_last.hpp>
 #include <range/v3/view/enumerate.hpp>
+
+#include <array>
+#include <cstdint>
+#include <functional>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -22,14 +21,14 @@ using Value = int64_t;
 using Ingredient = std::array<Value, 5>;
 using Ingredients = std::vector<Ingredient>;
 
-void part1(Ingredients const& ingredients)
+void process(Ingredients const& ingredients)
 {
     std::vector<Value> distribution(ingredients.size(), 0);
 
-    auto apply = [&ingredients, &distribution]() -> Value {
+    auto apply = [&ingredients, &distribution]() -> Ingredient {
         Ingredient total = {0};
         for (auto const& [idx_i, i] : ranges::views::enumerate(ingredients)) {
-            for (auto const& [idx_t, val] : total | ranges::views::drop_last(1) | ranges::views::enumerate) {
+            for (auto const& [idx_t, val] : total | ranges::views::enumerate) {
                 val += distribution.at(idx_i) * i.at(idx_t);
             }
         }
@@ -38,18 +37,18 @@ void part1(Ingredients const& ingredients)
                 val = 0;
             }
         }
-        total.back() = 1; // ignoring calories
-        return std::accumulate(total.begin(), total.end(), 1, std::multiplies<int>());
+        return total;
     };
 
-    Value max_score = 0;
+    Value max_score1 = 0;
+    Value max_score2 = 0;
 
     for (;;) {
         distribution.front() = 0;
-        Value sum = std::accumulate(distribution.begin(), distribution.end(), 0);
+        Value sum = ranges::accumulate(distribution, 0);
         Value max = 100;
         if (sum == max) {
-            max = *std::max_element(distribution.begin(), distribution.end());
+            max = *ranges::max_element(distribution);
         }
         for (unsigned idx = 1; idx < distribution.size(); ++idx) {
             Value& val = distribution.at(idx);
@@ -61,17 +60,25 @@ void part1(Ingredients const& ingredients)
             }
         }
 
-        Value rest = 100 - std::accumulate(distribution.begin(), distribution.end(), 0);
+        Value rest = 100 - ranges::accumulate(distribution, 0);
         distribution.front() = rest;
 
-        max_score = std::max(max_score, apply());
+        auto total = apply();
+        max_score1 = std::max(
+            max_score1, ranges::accumulate(total | ranges::views::drop_last(1), (Value)1, std::multiplies<Value>()));
+        if (total.back() == 500) {
+            max_score2 = std::max(
+                max_score2,
+                ranges::accumulate(total | ranges::views::drop_last(1), (Value)1, std::multiplies<Value>()));
+        }
 
         if (distribution.front() == 100) {
             break;
         }
     }
 
-    fmt::print("1: {}\n", max_score);
+    fmt::print("1: {}\n", max_score1);
+    fmt::print("2: {}\n", max_score2);
 }
 
 int main()
@@ -95,5 +102,5 @@ int main()
         ingredients.push_back(std::move(i));
     }
 
-    part1(ingredients);
+    process(ingredients);
 }
