@@ -1,3 +1,4 @@
+#include <array>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/constants.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -6,6 +7,7 @@
 
 #include <range/v3/view/enumerate.hpp>
 
+#include <functional>
 #include <iostream>
 #include <optional>
 #include <unordered_map>
@@ -39,14 +41,42 @@ static const std::unordered_map<std::string, unsigned> to_id = {
     {"perfumes",       perfumes},
 };
 
-using Memory = std::array<std::optional<char>, SIZE>;
+using Cell = std::optional<char>;
+using Memory = std::array<Cell, SIZE>;
 
-bool operator==(const Memory& memory, const Memory& evidence) noexcept
+using Comaparator = std::function<bool(const Cell&, const Cell&)>;
+
+static const std::array<Comaparator, SIZE> to_compare = {
+    std::equal_to<Cell>(),
+    std::greater<Cell>(),
+    std::equal_to<Cell>(),
+    std::less<Cell>(),
+    std::equal_to<Cell>(),
+    std::equal_to<Cell>(),
+    std::less<Cell>(),
+    std::greater<Cell>(),
+    std::equal_to<Cell>(),
+    std::equal_to<Cell>(),
+};
+
+
+bool compare_memory1(const Memory& memory, const Memory& evidence) noexcept
 {
     bool same = true;
     for (auto const& [idx, m] : ranges::views::enumerate(memory)) {
         if (m.has_value()) {
             same = same && (m == evidence.at(idx));
+        }
+    }
+    return same;
+}
+
+bool compare_memory2(const Memory& memory, const Memory& evidence) noexcept
+{
+    bool same = true;
+    for (auto const& [idx, m] : ranges::views::enumerate(memory)) {
+        if (m.has_value()) {
+            same = same && to_compare.at(idx)(m, evidence.at(idx));
         }
     }
     return same;
@@ -65,7 +95,6 @@ int main()
         std::vector<std::string> parts;
         boost::algorithm::split(parts, line, boost::algorithm::is_any_of(" :,"), boost::token_compress_on);
 
-        // Sue 1: goldfish: 6, trees: 9, akitas: 0
         Memory m;
         m.at(to_id.at(parts.at(2))) = std::stoi(parts.at(3));
         m.at(to_id.at(parts.at(4))) = std::stoi(parts.at(5));
@@ -74,8 +103,11 @@ int main()
     }
 
     for (auto const& [idx, m] : ranges::views::enumerate(memories)) {
-        if (m == evidence) {
+        if (compare_memory1(m, evidence)) {
             fmt::print("1: {}\n", idx+1);
+        }
+        if (compare_memory2(m, evidence)) {
+            fmt::print("2: {}\n", idx+1);
         }
     }
 }
