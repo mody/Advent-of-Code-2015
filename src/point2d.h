@@ -1,6 +1,5 @@
 #include <boost/container_hash/hash.hpp>
 #include <cmath>
-#include <cstdint>
 #include <type_traits>
 
 namespace Gfx_2d {

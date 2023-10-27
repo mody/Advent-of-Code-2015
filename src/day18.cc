@@ -89,6 +89,39 @@ void part1(World world)
     fmt::print("1: {}\n", world.data.size());
 }
 
+void part2(World world)
+{
+    world.data.insert({{0, 0}, '#'});
+    world.data.insert({{99, 99}, '#'});
+    world.data.insert({{99, 0}, '#'});
+    world.data.insert({{0, 99}, '#'});
+
+    for (unsigned i = 0; i < 100; ++i) {
+        Data next;
+        next.insert({{0, 0}, '#'});
+        next.insert({{99, 99}, '#'});
+        next.insert({{99, 0}, '#'});
+        next.insert({{0, 99}, '#'});
+        world.min_max();
+        for (Coord y = world.min_y; y <= world.max_y; ++y) {
+            for (Coord x = world.min_x; x <= world.max_x; ++x) {
+                const unsigned neighbours = world.around({x, y});
+                if (world.data.contains({x, y})) {
+                    if (neighbours == 2 || neighbours == 3) {
+                        next.insert({{x, y}, '#'});
+                    }
+                } else {
+                    if (neighbours == 3) {
+                        next.insert({{x, y}, '#'});
+                    }
+                }
+            }
+        }
+        std::swap(next, world.data);
+    }
+    fmt::print("2: {}\n", world.data.size());
+}
+
 int main()
 {
     World world;
@@ -111,6 +144,7 @@ int main()
     world.min_max();
 
     part1(world);
+    part2(world);
 
     return 0;
 }
