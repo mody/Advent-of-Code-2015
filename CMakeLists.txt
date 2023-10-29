@@ -11,6 +11,7 @@ find_package(Boost COMPONENTS regex REQUIRED)
 find_package(range-v3 REQUIRED)
 find_package(RapidJSON REQUIRED)
 find_package(fmt REQUIRED)
+find_package(TBB REQUIRED)
 
 find_package(PkgConfig)
 pkg_check_modules(CRYPTOPP libcryptopp)
@@ -77,7 +78,7 @@ target_link_libraries(day13 PRIVATE ${DEFAULT_LIBS})
 
 add_executable(day14 src/day14.cc)
 target_compile_features(day14 PRIVATE cxx_std_20)
-target_link_libraries(day14 PRIVATE ${DEFAULT_LIBS} ${CRYPTOPP_LIBRARIES} ${TBB_LIBRARIES})
+target_link_libraries(day14 PRIVATE ${DEFAULT_LIBS})
 
 add_executable(day15 src/day15.cc)
 target_compile_features(day15 PRIVATE cxx_std_20)
@@ -89,7 +90,7 @@ target_link_libraries(day16 PRIVATE ${DEFAULT_LIBS})
 
 add_executable(day17 src/day17.cc)
 target_compile_features(day17 PRIVATE cxx_std_20)
-target_link_libraries(day17 PRIVATE ${DEFAULT_LIBS} ${CRYPTOPP_LIBRARIES})
+target_link_libraries(day17 PRIVATE ${DEFAULT_LIBS})
 
 add_executable(day18 src/day18.cc)
 target_compile_features(day18 PRIVATE cxx_std_20)
@@ -99,10 +100,10 @@ add_executable(day19 src/day19.cc)
 target_compile_features(day19 PRIVATE cxx_std_20)
 target_link_libraries(day19 PRIVATE ${DEFAULT_LIBS})
 
-# add_executable(day20 src/day20.cc)
-# target_compile_features(day20 PRIVATE cxx_std_20)
-# target_link_libraries(day20 PRIVATE ${DEFAULT_LIBS})
-# 
+add_executable(day20 src/day20.cc)
+target_compile_features(day20 PRIVATE cxx_std_20)
+target_link_libraries(day20 PRIVATE ${DEFAULT_LIBS} tbb)
+
 # add_executable(day21 src/day21.cc)
 # target_compile_features(day21 PRIVATE cxx_std_20)
 # target_link_libraries(day21 PRIVATE ${DEFAULT_LIBS})
