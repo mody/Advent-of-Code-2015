@@ -51,34 +51,38 @@ static const std::vector<Item> RINGS = {
 bool fight(Player me, Player boss)
 {
     Player* attacks = &me, *defends = &boss;
-    for(;;) {
+    for (; defends->hitpoints > 0;) {
         defends->hitpoints -= std::max(1, (attacks->damage - defends->armor));
-        if (defends->hitpoints <= 0) break;
         std::swap(attacks, defends);
     }
     return me.hitpoints > boss.hitpoints;
 }
 
-void part1(Player const& boss)
+void game(Player const& boss)
 {
     int cheapest = std::numeric_limits<int>::max();
+    int most_expensive_loss = 0;
 
     for (auto const& ring1 : RINGS) {
         for (auto const& ring2 : RINGS) {
+            if (ring1.name == ring2.name) continue;
             for (auto const& armor : ARMORS) {
                 for (auto const& weapon : WEAPONS) {
                     Player me;
                     me.hitpoints = 100;
                     me.damage = weapon.damage + ring1.damage + ring2.damage;
                     me.armor = armor.armor + ring1.armor + ring2.armor;
+                    const int cost = weapon.cost + armor.cost + ring1.cost + ring2.cost;
                     if (fight(me, boss)) {
-                        cheapest = std::min(cheapest, weapon.cost + armor.cost + ring1.cost + ring2.cost);
+                        cheapest = std::min(cheapest, cost);
+                    } else {
+                        most_expensive_loss = std::max(most_expensive_loss, cost);
                     }
                 }
             }
         }
     }
-    fmt::print("1: {}\n", cheapest);
+    fmt::print("1: {}\n2: {}\n", cheapest, most_expensive_loss);
 }
 
 int main()
@@ -103,5 +107,5 @@ int main()
         }
     }
 
-    part1(boss);
+    game(boss);
 }
