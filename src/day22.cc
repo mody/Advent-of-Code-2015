@@ -100,7 +100,7 @@ struct boost::hash<State>
         size_t seed = 0;
         boost::hash_combine(seed, s.me);
         boost::hash_combine(seed, s.boss);
-        boost::hash_combine(seed, s.spells);
+        boost::hash_range(seed, s.spells.begin(), s.spells.end());
         boost::hash_combine(seed, s.spent);
         return seed;
     }
