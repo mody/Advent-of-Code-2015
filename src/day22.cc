@@ -106,7 +106,7 @@ struct boost::hash<State>
     }
 };
 
-void part1(Player const& boss)
+void game(Player const& boss, int extra_damage = 0)
 {
     State beginning;
 
@@ -150,6 +150,8 @@ void part1(Player const& boss)
 
         // make move
         State next1 = now;
+
+        next1.me.hitpoints -= extra_damage;
 
         // resolve active spells
         apply_spells(next1);
@@ -254,5 +256,6 @@ int main()
         }
     }
 
-    part1(boss);
+    game(boss);
+    game(boss, 1);
 }
