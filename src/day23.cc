@@ -9,7 +9,6 @@
 #include <map>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <variant>
 #include <vector>
 
@@ -158,6 +157,11 @@ int main()
     cpu1.registers = {0};
     cpu1.run();
     fmt::print("1: {}\n", cpu1.registers.at(static_cast<unsigned>(Register::B)));
+
+    CPU cpu2(prog);
+    cpu2.registers = {1, 0};
+    cpu2.run();
+    fmt::print("2: {}\n", cpu2.registers.at(static_cast<unsigned>(Register::B)));
 
     return 0;
 }
