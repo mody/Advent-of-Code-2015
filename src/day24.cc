@@ -1,9 +1,7 @@
 #include <fmt/core.h>
-#include <fmt/ranges.h>
 
 #include <range/v3/action/sort.hpp>
 #include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/all.hpp>
 
 #include <deque>
 #include <functional>
@@ -34,21 +32,22 @@ void iterate_level(unsigned level, Data input, Data output, CallBack cb)
 }
 
 
-void part1_b(Data const& input)
+uint64_t process(unsigned groups, Data const& input)
 {
     const unsigned total = ranges::accumulate(input, 0u);
-    assert((total % 3) == 0);
-    const unsigned one_3rd = total / 3;
+    assert((total % groups) == 0);
+    const unsigned group_value = total / groups;
+    const unsigned group_size = input.size() / groups;
 
     Data data = input;
     ranges::sort(data, std::greater<unsigned>());
 
-    unsigned best_size1 = input.size() / 3;
+    unsigned best_size1 = input.size();
     uint64_t best_qe = std::numeric_limits<uint64_t>::max();
 
-    for (unsigned level = 2; level < input.size() / 3 && level <= best_size1; ++level) {
+    for (unsigned level = 2; level <= group_size && level <= best_size1; ++level) {
         iterate_level(level, data, {}, [&](Data const& d) {
-            if (ranges::accumulate(d, 0u) == one_3rd) {
+            if (ranges::accumulate(d, 0u) == group_value) {
                 if (d.size() <= best_size1) {
                     uint64_t my_qe = ranges::accumulate(d, 1ull, [](uint64_t a, uint64_t b) { return a * b; });
                     best_size1 = d.size();
@@ -58,7 +57,7 @@ void part1_b(Data const& input)
         });
     }
 
-    fmt::print("1: {}\n", best_qe);
+    return best_qe;
 }
 
 int main()
@@ -73,5 +72,6 @@ int main()
         data.push_back(std::stoi(line));
     }
 
-    part1_b(data);
+    fmt::print("1: {}\n", process(3, data));
+    fmt::print("2: {}\n", process(4, data));
 }
