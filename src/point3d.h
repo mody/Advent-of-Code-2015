@@ -1,9 +1,9 @@
 #include <boost/container_hash/hash.hpp>
+
+#include <concepts>
 #include <type_traits>
 
 namespace Gfx_3d {
-
-template <typename T> concept Integral = std::is_integral_v<T>;
 
 struct Direction
 {
@@ -17,7 +17,7 @@ constexpr Direction Right{ 1, 0, 0};
 constexpr Direction Closer{ 0, 0, -1};
 constexpr Direction Further{0, 0, 1};
 
-template<Integral Coord>
+template<std::integral Coord>
 struct Point
 {
     Coord x {}, y {}, z{};
