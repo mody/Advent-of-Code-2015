@@ -1,14 +1,15 @@
 #include <boost/container_hash/hash.hpp>
-#include <cmath>
 #include <type_traits>
 
 namespace Gfx_2d {
+
+template <typename T> concept Integral = std::is_integral_v<T>;
 
 struct Direction
 {
     int dx = 0, dy = 0;
 
-    template<typename T>
+    template<Integral T>
     constexpr Direction operator*(const T& num) const noexcept
     {
         Direction d {dx, dy};
@@ -16,7 +17,7 @@ struct Direction
         return d;
     }
 
-    template<typename T>
+    template<Integral T>
     constexpr Direction& operator*=(const T& num) noexcept
     {
         static_assert(std::numeric_limits<T>::is_integer);
@@ -43,7 +44,7 @@ constexpr Direction Down{0,  1};
 constexpr Direction Left{-1, 0};
 constexpr Direction Right{ 1, 0};
 
-template<typename Coord>
+template<Integral Coord>
 struct Point
 {
     Coord x {}, y {};
