@@ -37,6 +37,13 @@ struct Instruction {
     Argument arg2;
 };
 
+struct Registers : public std::array<uint64_t, sizeof(Register)>
+{
+    uint64_t& at(Register const& r) {
+        return std::array<uint64_t, sizeof(Register)>::at(static_cast<unsigned>(r));
+    }
+};
+
 using Program = std::vector<Instruction>;
 
 struct CPU
@@ -48,7 +55,7 @@ struct CPU
     void run() noexcept;
 
     Program const& program;
-    std::array<uint64_t, sizeof(Register)> registers = {0};
+    Registers registers{0};
     std::string output;
 };
 
@@ -59,33 +66,31 @@ void CPU::run() noexcept
 
     for (auto pc = program.begin(); pc != program.end();)
     {
-        Instruction const& i = *pc;
-
-        switch(i.op) {
+        switch (Instruction const& i = *pc; i.op) {
         case Op::HLF:
-            registers.at(static_cast<unsigned>(std::get<Register>(i.arg1))) >>= 1;
+            registers.at(std::get<Register>(i.arg1)) >>= 1;
             ++pc;
             break;
         case Op::TPL:
-            registers.at(static_cast<unsigned>(std::get<Register>(i.arg1))) *= 3;
+            registers.at(std::get<Register>(i.arg1)) *= 3;
             ++pc;
             break;
         case Op::INC:
-            registers.at(static_cast<unsigned>(std::get<Register>(i.arg1))) += 1;
+            registers.at(std::get<Register>(i.arg1)) += 1;
             ++pc;
             break;
         case Op::JMP:
             std::advance(pc, std::get<int32_t>(i.arg1));
             break;
         case Op::JIE:
-            if ((registers.at(static_cast<unsigned>(std::get<Register>(i.arg1))) & 0x1) == 0) {
+            if ((registers.at(std::get<Register>(i.arg1)) & 0x1) == 0) {
                 std::advance(pc, std::get<int32_t>(i.arg2));
             } else {
                 ++pc;
             }
             break;
         case Op::JIO:
-            if (registers.at(static_cast<unsigned>(std::get<Register>(i.arg1))) == 1) {
+            if (registers.at(std::get<Register>(i.arg1)) == 1) {
                 std::advance(pc, std::get<int32_t>(i.arg2));
             } else {
                 ++pc;
@@ -156,12 +161,12 @@ int main()
     CPU cpu1(prog);
     cpu1.registers = {0};
     cpu1.run();
-    fmt::print("1: {}\n", cpu1.registers.at(static_cast<unsigned>(Register::B)));
+    fmt::print("1: {}\n", cpu1.registers.at(Register::B));
 
     CPU cpu2(prog);
     cpu2.registers = {1, 0};
     cpu2.run();
-    fmt::print("2: {}\n", cpu2.registers.at(static_cast<unsigned>(Register::B)));
+    fmt::print("2: {}\n", cpu2.registers.at(Register::B));
 
     return 0;
 }
