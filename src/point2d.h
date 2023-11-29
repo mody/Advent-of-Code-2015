@@ -21,7 +21,6 @@ struct Direction
     template<std::integral T>
     constexpr Direction& operator*=(const T& num) noexcept
     {
-        static_assert(std::numeric_limits<T>::is_integer);
         dx *= num;
         dy *= num;
         return *this;
@@ -30,20 +29,20 @@ struct Direction
     constexpr auto operator<=>(Direction const&) const = default;
 };
 
-constexpr Direction North{0, -1};
-constexpr Direction South{0,  1};
-constexpr Direction West{-1, 0};
-constexpr Direction East{ 1, 0};
+constinit const Direction North{0, -1};
+constinit const Direction South{0,  1};
+constinit const Direction West{-1, 0};
+constinit const Direction East{ 1, 0};
 
-constexpr Direction NW{-1, -1};
-constexpr Direction NE{ 1, -1};
-constexpr Direction SW{-1,  1};
-constexpr Direction SE{ 1,  1};
+constinit const Direction NW{-1, -1};
+constinit const Direction NE{ 1, -1};
+constinit const Direction SW{-1,  1};
+constinit const Direction SE{ 1,  1};
 
-constexpr Direction Up{0, -1};
-constexpr Direction Down{0,  1};
-constexpr Direction Left{-1, 0};
-constexpr Direction Right{ 1, 0};
+constinit const Direction Up{0, -1};
+constinit const Direction Down{0,  1};
+constinit const Direction Left{-1, 0};
+constinit const Direction Right{ 1, 0};
 
 template<std::integral Coord>
 struct Point
