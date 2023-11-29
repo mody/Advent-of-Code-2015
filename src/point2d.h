@@ -1,5 +1,6 @@
 #include <boost/container_hash/hash.hpp>
 
+#include <compare>
 #include <concepts>
 #include <type_traits>
 
@@ -26,7 +27,7 @@ struct Direction
         return *this;
     }
 
-    constexpr bool operator==(Direction const& o) const noexcept { return dx == o.dx && dy == o.dy; }
+    constexpr auto operator<=>(Direction const&) const = default;
 };
 
 constexpr Direction North{0, -1};
@@ -61,7 +62,7 @@ struct Point
     constexpr Point& operator=(Point const&) noexcept = default;
     constexpr Point& operator=(Point&&) noexcept = default;
 
-    constexpr bool operator==(Point const& o) const noexcept { return x == o.x && y == o.y; }
+    constexpr auto operator<=>(Point const&) const = default;
 
     constexpr Point& operator+=(Direction const& o) noexcept
     {
@@ -90,8 +91,6 @@ struct Point
     }
 
     constexpr Direction operator-(Point const& o) const noexcept { return {x - o.x, y - o.y}; }
-
-    constexpr bool operator<(Point const& o) const noexcept { return std::tie(x, y) < std::tie(o.x, o.y); }
 
     constexpr Coord manhattan_dist(Point const& o) const noexcept
     {

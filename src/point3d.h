@@ -1,5 +1,6 @@
 #include <boost/container_hash/hash.hpp>
 
+#include <compare>
 #include <concepts>
 #include <type_traits>
 
@@ -8,6 +9,8 @@ namespace Gfx_3d {
 struct Direction
 {
     int dx = 0, dy = 0, dz = 0;
+
+    constexpr auto operator<=>(Direction const&) const = default;
 };
 
 constexpr Direction Up{0, -1, 0};
@@ -35,7 +38,7 @@ struct Point
     constexpr Point& operator=(Point const&) noexcept = default;
     constexpr Point& operator=(Point&&) noexcept = default;
 
-    constexpr bool operator==(Point const& o) const noexcept { return x == o.x && y == o.y && z == o.z; }
+    constexpr auto operator<=>(Point const&) const = default;
 
     constexpr Point& operator+=(Direction const& o) noexcept
     {
@@ -66,8 +69,6 @@ struct Point
     }
 
     constexpr Direction operator-(Point const& o) const noexcept { return {x - o.x, y - o.y, z - o.z}; }
-
-    constexpr bool operator<(Point const& o) const noexcept { return std::tie(x, y, z) < std::tie(o.x, o.y, o.z); }
 
     constexpr Coord manhattan_dist(Point const& o) const noexcept
     {
