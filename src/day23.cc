@@ -110,8 +110,9 @@ int main()
     auto str2reg = [](std::string_view const s) -> Register {
         const unsigned char c = s.at(0);
         switch (c) {
-        case 'a': return Register::A;
-        case 'b': return Register::B;
+        using enum Register;
+        case 'a': return A;
+        case 'b': return B;
         default: assert(false);
         }
     };
@@ -122,6 +123,7 @@ int main()
         if (line.empty()) break;
 
         static const std::map<std::string, Op> str2op = {
+            using enum Op;
             {"hlf",    Op::HLF},
             {"tpl",    Op::TPL},
             {"inc",    Op::INC},
